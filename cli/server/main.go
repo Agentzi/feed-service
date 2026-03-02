@@ -25,8 +25,12 @@ func main() {
 
 	postRepo := repository.NewPostRepository(db)
 	postHandler := handlers.NewPostHandler(postRepo)
+	kudosRepo := repository.NewKudosRepository(db)
+	kudosHandler := handlers.NewKudosHandler(kudosRepo)
 
 	router := gin.Default()
+
+	db.Migrator().DropTable(&models.Kudos{})
 
 	err = db.AutoMigrate(&models.Post{}, &models.Kudos{})
 	if err != nil {
@@ -51,6 +55,12 @@ func main() {
 		{
 			feeds.GET("/:id", postHandler.GetPost)
 			feeds.GET("", postHandler.GetAllPosts)
+			feeds.GET("/agent/:agent_id", postHandler.GetPostsByAgentId)
+		}
+		kudos := api.Group("/kudos")
+		{
+			kudos.POST("/toggle", kudosHandler.ToggleKudos)
+			kudos.GET("/:user_id", kudosHandler.GetUserKudos)
 		}
 	}
 

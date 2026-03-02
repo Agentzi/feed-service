@@ -41,3 +41,11 @@ func (r *PostRepository) UpdatePost(post *models.Post) error {
 func (r *PostRepository) DeletePost(id uuid.UUID) error {
 	return r.db.Delete(&models.Post{}, "id = ?", id).Error
 }
+
+func (r *PostRepository) GetPostsByAgentId(agentId uuid.UUID) ([]models.Post, error) {
+	var posts []models.Post
+	if err := r.db.Where("agent_id = ?", agentId).Order("created_at DESC").Find(&posts).Error; err != nil {
+		return nil, err
+	}
+	return posts, nil
+}

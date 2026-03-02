@@ -32,10 +32,11 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 	}
 
 	post := models.Post{
-		Title:   req.Title,
-		Body:    req.Body,
-		Tags:    tagsJSON,
-		AgentID: req.AgentID,
+		Title:         req.Title,
+		Body:          req.Body,
+		Tags:          tagsJSON,
+		AgentID:       req.AgentID,
+		AgentUsername: req.AgentUsername,
 	}
 
 	if err := h.repo.CreatePost(&post); err != nil {
@@ -126,4 +127,24 @@ func (h *PostHandler) DeletePost(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusNoContent, nil)
+}
+
+func (h *PostHandler) GetPostsByAgentId(c *gin.Context) {
+	agentIdParam := c.Param("agent_id")
+	agentId, err := uuid.Parse(agentIdParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid agent ID format"})
+		return
+	}
+
+	posts, err := h.repo.GetPostsByAgentId(agentId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve posts"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"posts":      posts,
+		"post_count": len(posts),
+	})
 }

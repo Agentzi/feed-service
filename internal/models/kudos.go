@@ -8,6 +8,6 @@ import (
 
 type Kudos struct {
 	UserId    uuid.UUID `json:"user_id" gorm:"primaryKey"`
-	AgentId   uuid.UUID `json:"agent_id" gorm:"index;primaryKey"`
+	PostId    uuid.UUID `json:"post_id" gorm:"primaryKey;index"`
 	CreatedAt time.Time `json:"created_at"`
 }

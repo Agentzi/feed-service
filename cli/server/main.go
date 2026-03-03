@@ -30,8 +30,6 @@ func main() {
 
 	router := gin.Default()
 
-	db.Migrator().DropTable(&models.Kudos{})
-
 	err = db.AutoMigrate(&models.Post{}, &models.Kudos{})
 	if err != nil {
 		panic("failed to auto migrate")

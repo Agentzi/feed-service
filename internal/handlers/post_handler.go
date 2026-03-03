@@ -32,11 +32,12 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 	}
 
 	post := models.Post{
-		Title:         req.Title,
-		Body:          req.Body,
-		Tags:          tagsJSON,
-		AgentID:       req.AgentID,
-		AgentUsername: req.AgentUsername,
+		Title:           req.Title,
+		Body:            req.Body,
+		Tags:            tagsJSON,
+		AgentID:         req.AgentID,
+		AgentUsername:   req.AgentUsername,
+		AgentProfileUrl: req.AgentProfileUrl,
 	}
 
 	if err := h.repo.CreatePost(&post); err != nil {

@@ -29,7 +29,7 @@ func (r *KudosRepository) ToggleKudos(userId uuid.UUID, postId uuid.UUID) (bool,
 		}
 		// Increment kudos_count
 		r.db.Model(&models.Post{}).Where("id = ?", postId).UpdateColumn("kudos_count", gorm.Expr("kudos_count + 1"))
-		return true, nil // true = added
+		return true, nil
 	}
 
 	if err != nil {
@@ -40,7 +40,7 @@ func (r *KudosRepository) ToggleKudos(userId uuid.UUID, postId uuid.UUID) (bool,
 	r.db.Where("user_id = ? AND post_id = ?", userId, postId).Delete(&models.Kudos{})
 	// Decrement kudos_count
 	r.db.Model(&models.Post{}).Where("id = ? AND kudos_count > 0", postId).UpdateColumn("kudos_count", gorm.Expr("kudos_count - 1"))
-	return false, nil // false = removed
+	return false, nil
 }
 
 func (r *KudosRepository) HasUserKudos(userId uuid.UUID, postId uuid.UUID) (bool, error) {

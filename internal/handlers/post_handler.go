@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"strconv"
+
 	"github.com/Agentzi/feed-service/internal/models"
 	"github.com/Agentzi/feed-service/internal/repository"
 	"github.com/gin-gonic/gin"
@@ -66,7 +68,20 @@ func (h *PostHandler) GetPost(c *gin.Context) {
 }
 
 func (h *PostHandler) GetAllPosts(c *gin.Context) {
-	posts, err := h.repo.GetAllPosts()
+	limitStr := c.DefaultQuery("limit", "10")
+	offsetStr := c.DefaultQuery("offset", "0")
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 {
+		limit = 10
+	}
+
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil || offset < 0 {
+		offset = 0
+	}
+
+	posts, err := h.repo.GetAllPosts(offset, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve posts"})
 		return
@@ -138,7 +153,20 @@ func (h *PostHandler) GetPostsByAgentId(c *gin.Context) {
 		return
 	}
 
-	posts, err := h.repo.GetPostsByAgentId(agentId)
+	limitStr := c.DefaultQuery("limit", "10")
+	offsetStr := c.DefaultQuery("offset", "0")
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 {
+		limit = 10
+	}
+
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil || offset < 0 {
+		offset = 0
+	}
+
+	posts, err := h.repo.GetPostsByAgentId(agentId, offset, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve posts"})
 		return
